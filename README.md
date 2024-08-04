@@ -15,21 +15,47 @@ This project demonstrates how to:
 
 ## Overview
 
-This project implements an Alert Manager system to handle alerts programmatically. It receives alerts, enriches the data, and takes actions such as sending notifications to Slack.
+This project implements an Alert Manager system to handle specific alerts **CRITICAL** programmatically. It receives alerts, enriches the data, and takes actions such as sending notifications to Slack.
 
-###Prerequisites
+### Prerequisites
 - Docker
 - Kubernetes cluster
 - kubectl configured to interact with your Kubernetes cluster
+- Application to expose metrics
 - Prometheus
 
 ### Architecture
 
 <img width="737" alt="image" src="https://github.com/user-attachments/assets/eb2a6597-ce6e-4b96-90a3-102582e6c76d">
 
-## Setup
+## Setup Prerequisites
 
-1. Clone the repository and navigate to the project directory.
+### Web Application
+1. Clone the repository and navigate to the webserver directory.
+2. Create a virtual environment and activate it:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+3. Create the kubernetes namespace (if it doesn't exist)
+    ```bash
+    kubectl create ns <namespace>
+    ```
+5. Deploy the application to Kubernetes:
+    ```bash
+    kubectl apply -f webserver-deployment.yaml
+    ```
+6. Update Prometheus.yaml file and deploy on kubernetes (Read Comment in Yaml file).
+    ```bash
+    kubectl apply -f prometheus.yaml
+    ```
+7. Access the Prometheus UI: Open your web browser and navigate to the Prometheus UI. Use the node IP and NodePort you configured earlier, e.g., http://<PROMETHEUS_IP>:30090.
+8. Check Targets: In the Prometheus UI, go to Status -> Targets and ensure the flask-app target is listed and UP.
+9. Query Metrics: Use the expression {job="flask-app"} to see the CPU and memory usage metrics being scraped from the Flask service.
+
+## Alert Manager Setup
+
+1. Clone the repository and navigate to the project directory(alert_manager).
 2. Create a virtual environment and activate it:
     ```bash
     python3 -m venv venv
@@ -42,7 +68,7 @@ This project implements an Alert Manager system to handle alerts programmaticall
 4. Set up your Slack webhook URL in the `app.py` file.
 5. Run the Flask application:
     ```bash
-    python app.py
+    python3 app.py
     ```
 
 ## Docker
@@ -62,17 +88,35 @@ To run the application using Docker:
 
 To deploy the application to Kubernetes:
 
-1. Apply the deployment:
+1. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap.
+   ```bash
+    kubectl apply -f deployment.yaml
+    ```
+2. Apply the deployment:
     ```bash
     kubectl apply -f deployment.yaml
     ```
 
-2. Configure Prometheus to send alerts to the Alert Manager webhook.
-
 ## Testing
 
-1. Ensure Prometheus and Alertmanager are running.
+1. Ensure Webserver, Prometheus and Alertmanager are running.
 2. Trigger an alert and check the Slack channel for notifications.
+   ```bash
+    curl -X POST http://192.168.123.219:30000/webhook -H "Content-Type: application/json" -d '{
+   "annotations": {
+    "description": "Pod customer/customer-rs-transformer-9b75b488c-cpfd7 (rs-transformer) is restarting 2.11 times / 10 minutes.",
+    "summary": "Pod is crash looping."
+   },
+   "labels": {
+    "alertname": "KubePodCrashLooping",
+    "namespace": "customer",
+    "pod": "customer-rs-transformer-9b75b488c-cpfd7",
+    "severity": "WARNING"
+   },
+   "startsAt": "2022-03-02T07:31:57.339Z",
+   "status": "firing"
+   }'
+    ```
 
 ## Extending
 
