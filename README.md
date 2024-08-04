@@ -1,15 +1,17 @@
 # Alert Manager
 
-**Problem Statement:**
+### Problem Statement:
+
 We need to set up a monitoring solution for a Flask application to gather and expose real-time CPU and memory usage metrics. This setup will be used for dummy testing purposes. The metrics should be collected and exposed in a format that Prometheus can scrape and monitor.
 
-Description
+**Description**
+
 This project demonstrates how to:
 
-Create a Flask application that collects real-time CPU and memory metrics.
-Dockerize the Flask application.
-Deploy the Flask application to a Kubernetes cluster.
-Configure Prometheus to scrape the metrics from the Flask application.
+1. Create a Flask application that collects real-time CPU and memory metrics.
+2. Dockerize the Flask application.
+3. Deploy the Flask application to a Kubernetes cluster.
+4. Configure Prometheus to scrape the metrics from the Flask application.
 
 ## Overview
 
