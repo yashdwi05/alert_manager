@@ -26,7 +26,7 @@ This project implements an Alert Manager system to handle specific alerts **CRIT
 
 ### Architecture
 
-<img width="737" alt="image" src="https://github.com/user-attachments/assets/eb2a6597-ce6e-4b96-90a3-102582e6c76d">
+<img width="712" alt="image" src="https://github.com/user-attachments/assets/438dccd3-be99-42ac-8fd1-6dfc04ee6ab2">
 
 ## Setup Prerequisites
 
@@ -50,21 +50,21 @@ This project implements an Alert Manager system to handle specific alerts **CRIT
 
 ## Alert Manager Setup
 
-1. Clone the repository and navigate to the project directory(alert_manager).
-2. Create a virtual environment and activate it:
+1. Navigate to the project directory (alert_manager).
+2. Create the Docker Image using Dockerfile and push it to docker hub repository:
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
+    docker build -t <username>/alert-manager:<tag> .
+    docker push <username>/alert-manager:<tag>
     ```
-3. Install the dependencies:
+3. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap:
     ```bash
-    pip install -r requirements.txt
+    kubectl apply -f configmap.yaml
     ```
-4. Set up your Slack webhook URL in the `app.py` file.
-5. Run the Flask application:
+4. Update deployment for earlier build image and Apply the deployment:
     ```bash
-    python3 app.py
+    kubectl apply -f deployment.yaml
     ```
+5. 
 
 ## Docker
 
@@ -72,11 +72,11 @@ To run the application using Docker:
 
 1. Build the Docker image:
     ```bash
-    docker build -t alert-manager .
+    docker build -t <username>/alert-manager:<tag>  .
     ```
 2. Run the Docker container:
     ```bash
-    docker run -p 5000:5000 alert-manager
+    docker run -p 5000:5000 <username>/alert-manager:<tag> 
     ```
 
 ## Kubernetes
@@ -85,7 +85,7 @@ To deploy the application to Kubernetes:
 
 1. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap.
    ```bash
-    kubectl apply -f deployment.yaml
+    kubectl apply -f configmap.yaml
     ```
 2. Apply the deployment:
     ```bash
@@ -95,9 +95,19 @@ To deploy the application to Kubernetes:
 ## Testing
 
 1. Ensure Webserver, Prometheus and Alertmanager are running.
-2. Trigger an alert and check the Slack channel for notifications.
+2. Get the node IP and NodePort.
    ```bash
-    curl -X POST http://192.168.123.219:30000/webhook -H "Content-Type: application/json" -d '{
+   #Get Node IP
+   kubectl get po -n <namespace> -o wide
+   #Get Service NodePort
+   kubectl get service -n <namespace>
+   ```
+4. Trigger an alert and check the Slack channel for notifications. Use the node IP and NodePort you configured for the service.
+
+   #### Test Alert 1:
+   
+   ```bash
+    curl -X POST http://<AlertManagerIP>:<NodePort>/webhook -H "Content-Type: application/json" -d '{
    "annotations": {
     "description": "Pod customer/customer-rs-transformer-9b75b488c-cpfd7 (rs-transformer) is restarting 2.11 times / 10 minutes.",
     "summary": "Pod is crash looping."
@@ -107,6 +117,25 @@ To deploy the application to Kubernetes:
     "namespace": "customer",
     "pod": "customer-rs-transformer-9b75b488c-cpfd7",
     "severity": "WARNING"
+   },
+   "startsAt": "2022-03-02T07:31:57.339Z",
+   "status": "firing"
+   }'
+    ```
+   
+   #### Test Alert 2:
+
+   ```bash
+    curl -X POST http://<AlertManagerIP>:<NodePort>/webhook -H "Content-Type: application/json" -d '{
+   "annotations": {
+    "description": "Pod customer/customer-rs-transformer-9b75b488c-cpfd7 (rs-transformer) is restarting 2.11 times / 10 minutes.",
+    "summary": "Pod is crash looping."
+   },
+   "labels": {
+    "alertname": "KubePodCrashLooping",
+    "namespace": "customer",
+    "pod": "customer-rs-transformer-9b75b488c-cpfd7",
+    "severity": "CRITICAL"
    },
    "startsAt": "2022-03-02T07:31:57.339Z",
    "status": "firing"
