@@ -1,4 +1,5 @@
 # Alert Manager
+
 Problem Statement:
 We need to set up a monitoring solution for a Flask application to gather and expose real-time CPU and memory usage metrics. This setup will be used for dummy testing purposes. The metrics should be collected and exposed in a format that Prometheus can scrape and monitor.
 
