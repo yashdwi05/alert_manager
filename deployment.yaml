@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alert-manager
+  namespace: <namespace> #Required namespace to deploy
 spec:
   replicas: 1
   selector:
@@ -14,14 +15,27 @@ spec:
     spec:
       containers:
       - name: alert-manager
-        image: alert-manager:latest
+        image: <Image Name>:<Tag> #Required Created Docker Image name and tag
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
+        env:
+        - name: SLACK_WEBHOOK_URL
+          valueFrom:
+            configMapKeyRef:
+              name: alert-manager-config
+              key: SLACK_WEBHOOK_URL
+        - name: PROMETHEUS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: alert-manager-config
+              key: PROMETHEUS_URL
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: alert-manager
+  namespace: <namespace> #Required namespace to deploy
 spec:
   type: NodePort
   ports:
