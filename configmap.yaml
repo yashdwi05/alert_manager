@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alert-manager-config
+  namespace: <namespace> #Required namespace to deploy
+data:
+  SLACK_WEBHOOK_URL: "<Webhook URL>"
+  PROMETHEUS_URL: "http://<Prometheus URL>:<Port>"
