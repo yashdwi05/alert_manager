@@ -10,7 +10,7 @@ SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/your/slack/webhook/url'
 def webhook():
     alert = request.json
     
-    # Enrich the alert data (dummy enrichment for demonstration)
+    # Enrich the alert data
     enriched_data = enrich_alert(alert)
     
     # Take action based on the enriched data
@@ -19,12 +19,34 @@ def webhook():
     return jsonify({"message": "Alert received"}), 200
 
 def enrich_alert(alert):
-    # Example of enrichment (dummy data for demonstration)
+    # Fetch CPU and memory usage (dummy data for demonstration)
+    cpu_usage = get_cpu_usage(alert['labels']['pod'])
+    memory_usage = get_memory_usage(alert['labels']['pod'])
+
+    # Example of enrichment
     alert['enriched'] = {
-        'cpu': '75%',
-        'memory': '60%'
+        'cpu': cpu_usage,
+        'memory': memory_usage,
+        'recent_deployments': get_recent_deployments(alert['labels']['namespace']),
+        'logs': get_pod_logs(alert['labels']['pod'])
     }
     return alert
+
+def get_cpu_usage(pod_name):
+    # Dummy function to simulate fetching CPU usage
+    return "75%"
+
+def get_memory_usage(pod_name):
+    # Dummy function to simulate fetching memory usage
+    return "60%"
+
+def get_recent_deployments(namespace):
+    # Dummy function to simulate fetching recent deployments
+    return ["deployment-1", "deployment-2"]
+
+def get_pod_logs(pod_name):
+    # Dummy function to simulate fetching pod logs
+    return "Error: Out of memory"
 
 def take_action(alert):
     message = format_alert(alert)
