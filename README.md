@@ -17,6 +17,12 @@ This project demonstrates how to:
 
 This project implements an Alert Manager system to handle alerts programmatically. It receives alerts, enriches the data, and takes actions such as sending notifications to Slack.
 
+###Prerequisites
+- Docker
+- Kubernetes cluster
+- kubectl configured to interact with your Kubernetes cluster
+- Prometheus
+
 ### Architecture
 
 <img width="737" alt="image" src="https://github.com/user-attachments/assets/eb2a6597-ce6e-4b96-90a3-102582e6c76d">
