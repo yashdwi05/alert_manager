@@ -32,26 +32,21 @@ This project implements an Alert Manager system to handle specific alerts **CRIT
 
 ### Web Application
 1. Clone the repository and navigate to the webserver directory.
-2. Create a virtual environment and activate it:
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-3. Create the kubernetes namespace (if it doesn't exist)
+2. Create the kubernetes namespace (if it doesn't exist)
     ```bash
     kubectl create ns <namespace>
     ```
-5. Deploy the application to Kubernetes:
+3. Deploy the application to Kubernetes:
     ```bash
     kubectl apply -f webserver-deployment.yaml
     ```
-6. Update Prometheus.yaml file and deploy on kubernetes (Read Comment in Yaml file).
+4. Update Prometheus.yaml file and deploy on kubernetes (Read Comment in Yaml file).
     ```bash
     kubectl apply -f prometheus.yaml
     ```
-7. Access the Prometheus UI: Open your web browser and navigate to the Prometheus UI. Use the node IP and NodePort you configured earlier, e.g., http://<PROMETHEUS_IP>:30090.
-8. Check Targets: In the Prometheus UI, go to Status -> Targets and ensure the flask-app target is listed and UP.
-9. Query Metrics: Use the expression {job="flask-app"} to see the CPU and memory usage metrics being scraped from the Flask service.
+5. Access the Prometheus UI: Open your web browser and navigate to the Prometheus UI. Use the node IP and NodePort you configured earlier, e.g., http://<PROMETHEUS_IP>:30090.
+6. Check Targets: In the Prometheus UI, go to Status -> Targets and ensure the flask-app target is listed and UP.
+7. Query Metrics: Use the expression {job="flask-app"} to see the CPU and memory usage metrics being scraped from the Flask service.
 
 ## Alert Manager Setup
 
