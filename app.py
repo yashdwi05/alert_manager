@@ -1,14 +1,18 @@
+import newrelic.agent
+newrelic.agent.initialize('newrelic.ini')
+
 from flask import Flask, request, jsonify
 import requests
 import os
 from prometheus_api_client import PrometheusConnect, PrometheusApiClientException
 
+# Initialize the Flask application
 app = Flask(__name__)
 
-# Get Slack webhook URL from environment variable
+# Get the Slack webhook URL from environment variables
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL')
 
-# Prometheus connection
+# Set up the connection to Prometheus
 prometheus_url = os.getenv('PROMETHEUS_URL', 'http://localhost:9090')
 prom = PrometheusConnect(url=prometheus_url, disable_ssl=True)
 
@@ -23,7 +27,7 @@ def webhook():
     if alert['labels'].get('severity', '').upper() != 'CRITICAL':
         return jsonify({"message": "Alert ignored (not critical)"}), 200
     
-    # Enrich the alert data
+    # Enrich the alert data with additional metrics
     enriched_data = enrich_alert(alert)
     
     # Take action based on the enriched data
