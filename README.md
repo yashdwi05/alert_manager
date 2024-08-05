@@ -51,20 +51,20 @@ This project implements an Alert Manager system to handle specific alerts **CRIT
 ## Alert Manager Setup
 
 1. Navigate to the project directory (alert_manager).
-2. Create the Docker Image using Dockerfile and push it to docker hub repository:
+2. Replace **YOUR_NEW_RELIC_LICENSE_KEY** with your actual New Relic license key in newrelic.ini to monitor APM metrics.
+3. Create the Docker Image using Dockerfile and push it to docker hub repository:
     ```bash
     docker build -t <username>/alert-manager:<tag> .
     docker push <username>/alert-manager:<tag>
     ```
-3. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap:
+4. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap:
     ```bash
     kubectl apply -f configmap.yaml
     ```
-4. Update deployment for earlier build image and Apply the deployment:
+5. Update deployment for earlier build image and Apply the deployment:
     ```bash
     kubectl apply -f deployment.yaml
-    ```
-5. 
+    ``` 
 
 ## Docker
 
