@@ -74,12 +74,12 @@ To deploy the application to Kubernetes:
 ## Testing
 
 1. Ensure Webserver, Prometheus and Alertmanager are running.
-2. Get the node IP and NodePort.
+2. Get the alert-manager node IP and NodePort.
    ```bash
    #Get Node IP
-   kubectl get po -n <namespace> -o wide
+   kubectl get po -n <namespace> -o wide | grep alert-manager
    #Get Service NodePort
-   kubectl get service -n <namespace>
+   kubectl get service -n <namespace> | grep alert-manager
    ```
 4. Trigger an alert and check the Slack channel for notifications. Use the node IP and NodePort you configured for the service.
 
@@ -105,7 +105,7 @@ To deploy the application to Kubernetes:
    #### Test Alert 2:
 
    ```bash
-    curl -X POST http://<AlertManagerIP>:<NodePort>/webhook -H "Content-Type: application/json" -d '{
+    curl -X POST http://<AlertManagerNodeIP>:<NodePort>/webhook -H "Content-Type: application/json" -d '{
    "annotations": {
     "description": "Pod customer/customer-rs-transformer-9b75b488c-cpfd7 (rs-transformer) is restarting 2.11 times / 10 minutes.",
     "summary": "Pod is crash looping."
