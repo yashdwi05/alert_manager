@@ -56,30 +56,9 @@ This project implements an Alert Manager system to handle specific alerts **CRIT
     ```bash
     docker build -t <username>/alert-manager:<tag> .
     docker push <username>/alert-manager:<tag>
-    ```
-4. Update the configmap file PROMETHEUS_URL and SLACK_WEBHOOK_URL and apply the configmap:
-    ```bash
-    kubectl apply -f configmap.yaml
-    ```
-5. Update deployment for earlier build image and Apply the deployment:
-    ```bash
-    kubectl apply -f deployment.yaml
     ``` 
 
-## Docker
-
-To run the application using Docker:
-
-1. Build the Docker image:
-    ```bash
-    docker build -t <username>/alert-manager:<tag>  .
-    ```
-2. Run the Docker container:
-    ```bash
-    docker run -p 5000:5000 <username>/alert-manager:<tag> 
-    ```
-
-## Kubernetes
+### Kubernetes
 
 To deploy the application to Kubernetes:
 
